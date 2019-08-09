@@ -12,10 +12,7 @@ import {
   StyleSheet,
   ScrollView,
   View,
-  Text,
-  StatusBar,
-  TextInput,
-  Button
+  Text  
 } from 'react-native';
 
 import {
@@ -26,22 +23,40 @@ import {
   ReloadInstructions,  
 } from 'react-native/Libraries/NewAppScreen';
 
+
+import PlaceInput from "./src/components/PlaceInput/PlaceInput.js";
+import PlaceList from './src/components/PlaceList/PlaceList.js'
+
 class App extends Component {
 
   state = {
-    placeName: ''
+    places: []
   };
 
-  placeNameChangedHandler = (val) => {
-    this.setState({
-      placeName: val
-    })
+  placeAddedHandler = placeName => {
+    this.setState(prevState => {
+      return {
+        places: prevState.places.concat({
+          key: Math.random(),
+          value: placeName
+        })
+      };
+    });
+  };
+
+  placeDeletedHandler = (key) => {
+    this.setState(prevState => {
+      return {
+        places: prevState.places.filter(place => {
+          return place.key !== key;
+        })
+      };
+    });
   }
 
   render () {
     return (
-      <Fragment>
-        <StatusBar barStyle="dark-content" />
+      <Fragment>        
         <SafeAreaView>
           <ScrollView
             contentInsetAdjustmentBehavior="automatic"
@@ -50,20 +65,14 @@ class App extends Component {
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Step One</Text>
                 <Text style={styles.sectionDescription}>
-                  I want to change this screen and once again
+                  I want to change this screen
                 </Text>
-                <View style={styles.inputContainer}> 
-                  <TextInput
-                    style={styles.input}
-                    value={this.state.placeName} 
-                    onChangeText={this.placeNameChangedHandler}
-                    style={styles.placeInput}
-                    placeholder="an awersome place"
-                  />
-                  <Button 
-                    title="Add" 
-                    styles={styles.placeButton}/> 
-                </View>                        
+
+                <PlaceInput onPlaceAdded={this.placeAddedHandler} />
+                <PlaceList 
+                  places={this.state.places}
+                  onItemDeleted={this.placeDeletedHandler} />
+                                      
               </View>
             </View>
           </ScrollView>
@@ -106,21 +115,6 @@ const styles = StyleSheet.create({
     padding: 4,
     paddingRight: 12,
     textAlign: 'right',
-  },
-  inputContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  input: {
-    width: 300,
-    borderColor: "lightgrey",
-    borderWidth: 1
-  },
-  placeInput: {
-    width: "70%",
-
   },
   placeButton: {
     width: "30%",
