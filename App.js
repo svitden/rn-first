@@ -6,13 +6,16 @@
  * @flow
  */
 
-import React, {Fragment, Component} from 'react';
+import React, {Fragment, Component,useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
   View,
-  Text  
+  Text,
+  TextInput,
+  Button,
+  FlatList
 } from 'react-native';
 
 import {
@@ -24,101 +27,55 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 
-import PlaceInput from "./src/components/PlaceInput/PlaceInput.js";
-import PlaceList from './src/components/PlaceList/PlaceList.js'
+import GoalItem  from './src/components/GoalItem.js';
+import GoalInput  from './src/components/GoalInput.js'
 
-class App extends Component {
 
-  state = {
-    places: []
+export default function App() {  
+  const [courseGoals, setCourseGoals] = useState([]);
+  const [isAddMode, setIsAddMode] = useState(false);
+  
+  const addGoalHandler = (goalTitle) => {
+    setCourseGoals(currentGoals => [
+      ...currentGoals,
+      { id: Math.random().toString(), value: goalTitle }
+    ]);
+    setIsAddMode(false);
   };
 
-  placeAddedHandler = placeName => {
-    this.setState(prevState => {
-      return {
-        places: prevState.places.concat({
-          key: Math.random(),
-          value: placeName
-        })
-      };
+  const removeGoalHandler = goalId => {
+    setCourseGoals(currentGoals => {
+      return currentGoals.filter(goal => goal.id !== goalId);
     });
   };
 
-  placeDeletedHandler = (key) => {
-    this.setState(prevState => {
-      return {
-        places: prevState.places.filter(place => {
-          return place.key !== key;
-        })
-      };
-    });
-  }
+  const canselAdditHanler = () => {
+    setIsAddMode(false);
+  };
 
-  render () {
-    return (
-      <Fragment>        
-        <SafeAreaView>
-          <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            >        
-            <View style={styles.body}>
-              <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Step One</Text>
-                <Text style={styles.sectionDescription}>
-                  I want to change this screen
-                </Text>
 
-                <PlaceInput onPlaceAdded={this.placeAddedHandler} />
-                <PlaceList 
-                  places={this.state.places}
-                  onItemDeleted={this.placeDeletedHandler} />
-                                      
-              </View>
-            </View>
-          </ScrollView>
-        </SafeAreaView>
-      </Fragment>
-    );
-  }  
-};
+  return (    
+    <View style={styles.screen}>
+      <Button title="Add new goal" onPress={() => setIsAddMode(true)} />
+      <GoalInput
+        visible={isAddMode} 
+        onAddGoal={addGoalHandler} 
+        onCancel={canselAdditHanler}/>
+      <FlatList 
+        data={courseGoals}
+        keyExtractor={(item, index) => item.id}
+        renderItem={itemData => (
+          <GoalItem 
+            title={itemData.item.value}
+            id={itemData.item.id}
+            onDelete={removeGoalHandler} />
+        )} />
+    </View>      
+  );
+}
 
 const styles = StyleSheet.create({
-  
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    flex: 1,
-    marginTop: 32,
-    paddingHorizontal: 24,    
-    justifyContent: "flex-start",
-    alignItems: "center"
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-  placeButton: {
-    width: "30%",
+  screen: {
+    padding: 50
   }
 });
-
-export default App;
