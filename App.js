@@ -25,7 +25,7 @@ import {
   DebugInstructions,
   ReloadInstructions,  
 } from 'react-native/Libraries/NewAppScreen';
-
+import {Modal, TouchableHighlight, Alert} from 'react-native';
 
 import GoalItem  from './src/components/GoalItem.js';
 import GoalInput  from './src/components/GoalInput.js'
@@ -34,8 +34,17 @@ import GoalInput  from './src/components/GoalInput.js'
 export default function App() {  
   const [courseGoals, setCourseGoals] = useState([]);
   const [isAddMode, setIsAddMode] = useState(false);
-  
+
+  const [modalVisible, setModalVisible] = useState(false);
+  console.log('RE-rendering')
+  console.log(courseGoals);
+
+
   const addGoalHandler = (goalTitle) => {
+    if (goalTitle.length === 0) {
+      return;
+    }
+
     setCourseGoals(currentGoals => [
       ...currentGoals,
       { id: Math.random().toString(), value: goalTitle }
@@ -44,9 +53,11 @@ export default function App() {
   };
 
   const removeGoalHandler = goalId => {
+    console.log('to be deleted, goalId', goalId);
+    
     setCourseGoals(currentGoals => {
       return currentGoals.filter(goal => goal.id !== goalId);
-    });
+    });    
   };
 
   const canselAdditHanler = () => {
@@ -56,7 +67,9 @@ export default function App() {
 
   return (    
     <View style={styles.screen}>
-      <Button title="Add new goal" onPress={() => setIsAddMode(true)} />
+      <Button 
+        title="Add new goal" 
+        onPress={() => setIsAddMode(true)} />
       <GoalInput
         visible={isAddMode} 
         onAddGoal={addGoalHandler} 
@@ -70,6 +83,36 @@ export default function App() {
             id={itemData.item.id}
             onDelete={removeGoalHandler} />
         )} />
+
+      <View style={{marginTop: 22}}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={{marginTop: 22}}>
+            <View>
+              <Text>Hello World!</Text>
+
+              <TouchableHighlight
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}>
+                <Text>Hide Modal</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+
+        <TouchableHighlight
+          onPress={() => {
+            setModalVisible(true);
+          }}>
+          <Text>Show Modal</Text>
+        </TouchableHighlight>
+      </View>
     </View>      
   );
 }
