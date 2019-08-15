@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "postinstall": "rndebugger-open",
     "ios": "react-native run-ios",
-    "android": "react-native run-android"
+    "android": "react-native run-android",
+    "react-devtools": "react-devtools"
   },
   "dependencies": {
     "expo": "^34.0.4",
@@ -23,6 +24,7 @@
     "eslint": "6.1.0",
     "jest": "24.8.0",
     "metro-react-native-babel-preset": "0.54.1",
+    "react-devtools": "^3.6.3",
     "react-native-debugger-open": "^0.3.19",
     "react-test-renderer": "16.8.6"
   },
