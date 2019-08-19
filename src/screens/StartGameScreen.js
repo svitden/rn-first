@@ -5,12 +5,14 @@ import {
     StyleSheet,
     Button,
     TouchableWithoutFeedback,
-    Keyboard
+    Keyboard,
+    Alert
  } from 'react-native';
 
 import Card from './../components/Card.js';
 import Input from './../components/Input.js';
 import Colors from './../constants/colors.js';
+import NumberContainer from './../components/NumberContainer.js';
 
 const StartGameScreen = props => {
 
@@ -29,7 +31,9 @@ const StartGameScreen = props => {
 
     const confirmInputHandler = () => {
         const chosenNumber = parseInt(enteredValue);
-        if (chosenNumber === NaN || chosenNumber <=0 || chosenNumber > 99) {
+        if (isNaN(chosenNumber) || chosenNumber <=0 || chosenNumber > 99) {
+            Alert.alert('Invalid number!', 'Number has to be a number between 1 and 99', [{text: 'Okay', style: 'destructive', onPress: resetInputHandler}]);
+            
             return;
         }
         setConfirmed(true);        
@@ -42,7 +46,11 @@ const StartGameScreen = props => {
 
     if (confirmed) {
         confirmedOutput = (
-            <Text>Chosen Number: {selectedNumber} </Text>
+            <Card style={styles.summaryContainer}>             
+                <Text>You selected</Text>
+                <NumberContainer>{selectedNumber}</NumberContainer>
+                <Button title="START GAME" onPress={() => {props.onStartGame(selectedNumber)}} />
+            </Card>
         );
     }
 
@@ -54,7 +62,7 @@ const StartGameScreen = props => {
                 <Text style={styles.title}>Start a new game!</Text>
 
                 <Card style={styles.inputContainer}>
-                    <Text>Select a number</Text>
+                    <Text style={styles.secondtitle}>Select a number</Text>
                     <Input 
                         style={styles.input}
                         autoCapitalize='none'
@@ -78,7 +86,7 @@ const StartGameScreen = props => {
                                 color={Colors.primary} />
                         </View>                
                     </View>
-                </Card>
+                </Card>                
                 {confirmedOutput}
             </View>
         </TouchableWithoutFeedback>    
@@ -94,6 +102,9 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         marginVertical: 10,
+    },
+    secondtitle: {
+        fontSize: 16
     },
     inputContainer: {
         padding: 20,
@@ -113,6 +124,11 @@ const styles = StyleSheet.create({
         padding: 5,
         width: 50,                
         textAlign: 'center'
+    },
+    summaryContainer: {
+        marginTop: 20,
+        padding: 20,
+        alignItems: 'center'
     }
 });
 
